@@ -1,8 +1,8 @@
 # 프로젝트 기술 표준 가이드
 
-1. 개발 환경 및 기술 스택 (Tech Stack)
+1. [개발 환경 및 기술 스택 (Tech Stack)](./docs/1.개발_환경_및_기술_스택(Tech_Stack).md)
 2. 프로젝트 구조 및 패키징 (Project Structure)
-3. Java 21 & Coding Convention
+3. [Coding Convention & lombok](./docs/3.Coding_Convention_&_lombok.md)
 4. Persistence Layer 표준 (Hybrid: JPA + MyBatis)
 5. API 설계 및 메시지 표준 (API Design)
 6. Exception Handling (예외처리)
