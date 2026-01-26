@@ -8,23 +8,23 @@
 
     - 변경 감지(Dirty Checking): update 쿼리를 직접 날리지 않고, Entity의 상태를 변경하면 트랜잭션 종료 시 DB에 반영됩니다.
 
-> JPA 예시 구조
+    > JPA 예시 구조
 
-```java
-// JPA Entity: 비즈니스 로직 포함
-@Entity
-public class Member {
-    @Id @GeneratedValue
-    private Long id;
-    private String name;
-    private int point;
+    ```java
+    // JPA Entity: 비즈니스 로직 포함
+    @Entity
+    public class Member {
+        @Id @GeneratedValue
+        private Long id;
+        private String name;
+        private int point;
 
-    // 비즈니스 로직: 포인트 적립은 엔티티 내부에서 수행
-    public void addPoint(int amount) {
-        this.point += amount;
+        // 비즈니스 로직: 포인트 적립은 엔티티 내부에서 수행
+        public void addPoint(int amount) {
+            this.point += amount;
+        }
     }
-}
-```
+    ```
 
 2. MyBatis 관점의 데이터 객체 정책
 
@@ -36,22 +36,22 @@ public class Member {
 
     - 로직 분리: 객체는 데이터만 가지고 있고, 비즈니스 로직은 주로 Service 계층에서 처리하는 절차지향적 구조를 띠는 경우가 많습니다.
 
-> MyBatis 예시 구조
+    > MyBatis 예시 구조
 
-```xml
-<select id="findById" resultType="MemberDTO">
-    SELECT id, name, point 
-    FROM member 
-    WHERE id = #{id}
-</select>
-```
+    ```xml
+    <select id="findById" resultType="MemberDTO">
+        SELECT id, name, point 
+        FROM member 
+        WHERE id = #{id}
+    </select>
+    ```
 
-```java
-// MyBatis용 데이터 객체: 데이터 전달에 집중 (로직 거의 없음)
-public class MemberDTO {
-    private Long id;
-    private String name;
-    private int point;
-    // Getter, Setter 위주
-}
-```
+    ```java
+    // MyBatis용 데이터 객체: 데이터 전달에 집중 (로직 거의 없음)
+    public class MemberDTO {
+        private Long id;
+        private String name;
+        private int point;
+        // Getter, Setter 위주
+    }
+    ```
