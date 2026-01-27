@@ -24,6 +24,7 @@
 Spring Boot (Java) 개발자라면 IDE와 빌드 도구에 설정해서 자동으로 관리하는 것이 가장 편합니다.
 
 - IntelliJ IDEA에서 설정하기
+
     1. 설정 파일 다운로드: [Google Style XML](https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml)파일을 받습니다.
     2. 적용: Setting > Editor > Code Style > Java 에서 톱니바퀴 아이콘 클릭 후 Import Scheme를 선택해 다운로드한 파일을 불러옵니다.
 
