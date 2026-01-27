@@ -122,6 +122,53 @@ GitHub 등 외부 저장소와 협업하기 위한 명령어입니다.
 
 <br><br>
 
+# ☑️ Git 머지 충돌(Merge Conflict) 발생 및 해결 방법
+
+## 1. 충돌 내용 해석하기
+`cat text.txt`로 확인한 내용은 아래와 같은 의미를 가집니다.
+
+* **`<<<<<<< HEAD`**: 현재 내가 위치한 브랜치(`master`)의 내용 시작
+* **`=======`**: 두 브랜치 내용 사이의 **구분선**
+* **`>>>>>>> freature/user1`**: 합치려고 가져온 브랜치(`freature/user1`)의 내용 끝
+
+---
+
+## 2. 해결 단계
+
+### Step 1: 파일 수정 (에디터 사용)
+메모장, VS Code, 혹은 `vim` 같은 에디터로 `text.txt` 파일을 엽니다. 특수 기호들을 모두 삭제하고 **최종적으로 남길 내용**만 적습니다.
+
+**예시 (두 내용을 모두 유지할 경우):**
+
+```bash
+origin master
+freature/user1
+```
+
+### Step 1: 파일 수정 (에디터 사용)
+
+충돌 해결이 완료되었음을 Git에 알립니다.
+
+```bash
+git add .
+```
+
+### Step 3: 병합 마무리 (commit)
+
+```bash
+git commit -u "병합 해결"
+```
+
+### 4. 추가 팁: 병합 취소하기
+
+상황이 꼬여서 병합 시도 전으로 되돌리고 싶다면 아래 명령어를 사용합니다.
+
+```bash
+git merge --abort
+```
+
+<br><br>
+
 # ☑️ 실습
 
 ## git CLI 환경설정
@@ -632,7 +679,7 @@ $ git branch
 
 ```
 
-# git remote repository
+> git remote repository
 
 ```bash
 Administrator@DESKTOP-IKK5VVH MINGW64 /c/Projects/Workspace/git-remote-test (master)
@@ -714,4 +761,28 @@ context.md  text.txt
 
 Administrator@DESKTOP-IKK5VVH MINGW64 /c/Projects/Workspace/git-study (master)
 $
+```
+
+> merge conflict
+
+```bash
+Administrator@DESKTOP-IKK5VVH MINGW64 /c/Projects/Workspace/git-test (master)
+$ cat text.txt
+origin master
+
+
+Administrator@DESKTOP-IKK5VVH MINGW64 /c/Projects/Workspace/git-test (master)
+$ git merge freature/user1
+Auto-merging text.txt
+CONFLICT (content): Merge conflict in text.txt
+Automatic merge failed; fix conflicts and then commit the result.
+
+Administrator@DESKTOP-IKK5VVH MINGW64 /c/Projects/Workspace/git-test (master|MERGING)
+$ cat text.txt
+<<<<<<< HEAD
+origin master
+
+=======
+freature/user1
+>>>>>>> freature/user1
 ```
