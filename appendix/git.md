@@ -186,7 +186,17 @@ Changes to be committed:
 
 
 Administrator@DESKTOP-IKK5VVH MINGW64 /c/Projects/Workspace/git (master)
+$ echo "세번째 수정사항을 남기고 싶어" >> text1.txt
+
+Administrator@DESKTOP-IKK5VVH MINGW64 /c/Projects/Workspace/git (master)
+$ git add .
+
+Administrator@DESKTOP-IKK5VVH MINGW64 /c/Projects/Workspace/git (master)
+$ git commit -m "My second commit"
+[master 71253c4] My second commit
+ 1 file changed, 2 insertions(+)
+
+Administrator@DESKTOP-IKK5VVH MINGW64 /c/Projects/Workspace/git (master)
 $
-
-
 ```
+
