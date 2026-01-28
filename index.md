@@ -26,7 +26,7 @@
 
 3. ``코딩 컨벤션 (Coding Convention)``
 
-    - 코드 스타일: Google Java Style Guide 준수 및 IDE(IntelliJ) Formatter 공유
+    - 코드 스타일: [Google Java Style Guide](./docs/coding_convention.md) 준수 및 IDE(IntelliJ) Formatter 공유
 
     - 명명 규칙 (Naming Rule):
 
@@ -34,7 +34,7 @@
 
         - DB: 테이블/컬럼(Snake Case)
 
-        - Lombok 가이드: @RequiredArgsConstructor 필수 사용, @Data 및 @AllArgsConstructor 사용 금지
+        - [Lombok 가이드](./docs/lombok_coding_convention.md): @RequiredArgsConstructor 필수 사용, @Data 및 @AllArgsConstructor 사용 금지
 
         - 주석(Comment) 표준: 주요 비즈니스 로직에 대한 Javadoc 작성 및 API 설명 주석
 
