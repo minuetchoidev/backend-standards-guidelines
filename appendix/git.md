@@ -170,6 +170,51 @@ git merge --abort
 
 <br><br>
 
+# ☑️ Git 브랜치 머지 이슈 해결하기
+
+master 브랜치에서 feature/a부터 feature/e까지 총 5개의 브랜치를 순차적으로 병합(Merge)함.
+
+전체 머지 내역 중 중간에 포함된 feature/b와 feature/c의 변경 사항만 특정하여 취소해야 함.
+
+1. git revert 사용하기 (가장 안전한 방법)
+
+이미 머지된 기록은 남겨두되, 그 머지로 인해 생긴 코드의 변화만 반대로 되돌리는(취소하는) 방식입니다.
+
+협업 중이거나 이미 원격에 Push를 했다면 이 방법을 써야 합니다.
+
+머지 커밋은 부모가 둘이라서 -m 1 (메인 브랜치 쪽으로 되돌리겠다는 뜻) 옵션이 필요합니다.
+
+    - feature/b 취소: git revert -m 1 [feature/c의 머지 커밋 해시]
+    - feature/c 취소: git revert -m 1 [feature/c의 머지 커밋 해시]
+  
+2. git reset 사용하기
+
+아직 원격에 Push하지 않았고, 머지하기 전의 깨끗한 상태로 아예 시간을 되돌리고 싶을 때 사용합니다.
+
+주의: 머지 이후에 작업한 모든 내역이 사라질 수 있습니다.
+
+만약 머지 순서가 a → b → c → d → e 였다면, c를 취소하기 위해 c머지 전 단계(즉, b가 머지된 시점)로 돌아가야 합니다.
+
+그 후 d와 e를 다시 머지해야 합니다.
+
+  - 머지 전 상태로 돌아가기: git reset --hard [feature/a 머지 직후의 커밋 해시]
+  - 필요한 브랜치만 다시 머지:
+    - git merge feature/d
+    - git merge feature/e
+
+3. 추천하는 `가장 직관적인` 해결책
+
+현재 master 를 버리고 새로 만드는 방법도 있습니다.
+
+1. 정상적인 master 백업: git checkout -b master-backup
+2. 새 master 시작: git checkout master → git reset --hard [모든 머지 전의 원본 master]
+3. 원하는 것만 머지:
+  - git merge feature/a
+  - git merge feature/d
+  - git merge feature/e
+
+<br><br>
+
 # ☑️ 커밋 템플릿 (Commit Template) 사용하기
 
 커밋 메시지를 작성하기 위해 편집기(Vim, VS Code 등)가 열릴 때, 미리 작성해둔 안내 문구가 자동으로 나타나게 하는 방법입니다.
@@ -819,4 +864,45 @@ origin master
 =======
 freature/user1
 >>>>>>> freature/user1
+```
+
+> merge revert
+
+```bash
+Administrator@DESKTOP-IKK5VVH MINGW64 /c/Projects/Workspace/git-test (master)
+$ git log -p
+commit 58a5f7030364ce084e9a0d626e61d0c893d0ddcc (HEAD -> master)
+Author: minuetchoi.dev <minuetchoi.dev@gmail.com>
+Date:   Wed Jan 28 11:20:28 2026 +0900
+
+    Revert "Merge branch 'feature/c'"
+
+    This reverts commit 240f36f06c1e17957954bfe58556d74c6e16ca97, reversing
+    changes made to 19a2285ab02cd2eff983d47f2f9877fb4166c129.
+
+diff --git a/c1.txt b/c1.txt
+deleted file mode 100644
+index ae93045..0000000
+--- a/c1.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-c1
+
+commit 2d08fe05d3ce503e54d542f2e38e6f0ccf002a75
+Author: minuetchoi.dev <minuetchoi.dev@gmail.com>
+Date:   Wed Jan 28 11:19:20 2026 +0900
+
+    Revert "Merge branch 'feature/b'"
+
+    This reverts commit 19a2285ab02cd2eff983d47f2f9877fb4166c129, reversing
+    changes made to 029c13497b03b787792176e9b83ae078e76a5243.
+
+diff --git a/b1.txt b/b1.txt
+deleted file mode 100644
+index c9c6af7..0000000
+--- a/b1.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-b1
+
 ```
