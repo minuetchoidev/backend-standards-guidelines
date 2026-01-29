@@ -1,130 +1,117 @@
-# Spring Boot Core Annotations Guide (v3.5.10)
+# Spring Boot 3.5.x 핵심 어노테이션 50선 정리
 
-이 문서는 Spring Boot 3.5.10 환경에서 웹 애플리케이션 개발 시 필수적으로 사용되는 핵심 어노테이션들을 정리한 가이드입니다.
+Spring Boot 개발 시 가장 빈번하게 사용되는 핵심 어노테이션 50개를 8개의 카테고리로 분류하여 정리한 문서입니다.
 
 ---
 
-## 1. 프로젝트 설정 및 메인 (Core)
+## 1. 프로젝트 설정 및 메타 설정 (Config)
+애플리케이션의 시작점과 외부 설정을 구성합니다.
 
-### @SpringBootApplication
-- **설명**: Spring Boot의 핵심 어노테이션입니다. `@Configuration`, `@EnableAutoConfiguration`, `@ComponentScan` 세 가지를 합친 역할을 합니다.
-- **위치**: 주로 프로젝트의 메인 클래스에 위치합니다.
-
-```java
-@SpringBootApplication
-public class MyApiApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(MyApiApplication.class, args);
-    }
-}
-```
-
-## 2. 빈(Bean) 정의 및 의존성 주입 (DI)
-
-**@Component / @Service / @Repository / @Controller**
-
-- **설명**: 해당 클래스를 Spring 컨테이너가 관리하는 Bean으로 등록합니다.
-    - ``@Service``: 비즈니스 로직 레이어
-    - ``@Repository``: 데이터 엑세스 레이어 (Persistence)
-    - ``@Controller``: Web MVC 컨트롤러
-    - ``@RestController``: @Controller + @ResponseBody (JSON 반환용)
-
-**@@Configuration & @Bean**
-
-- **설명**: 자바 기반 설정 파일임을 명시하고, 메서드에서 반환되는 객체를 Bean으로 등록합니다.
-
-```java
-@Configuration
-public class AppConfig {
-    @Bean
-    public MyService myService() {
-        return new MyServiceImpl();
-    }
-}
-```
-
-**@Autowired**
-- **설명**: 필요한 의존성을 자동으로 주입합니다. (생성자, 필드, 메서드 주입 가능)
-- Tip: Spring Boot 3.x에서는 생성자 주입을 가장 권장합니다.
-
-<br>
-
-## 3. Web MVC 및 REST API
-
-**@RequestMapping & HTTP Method Annotations**
-
-- **셜명**: 특정 URL 경로를 메서드에 매핑합니다.
-- **종류**: ``@GetMapping``, ``@PostMapping``, ``@PutMapping``, ``@DeleteMapping``, ``@PatchMapping``
-
-```java
-@RestController
-@RequestMapping("/api/v1/users")
-public class UserController {
-
-    @GetMapping("/{id}")
-    public UserResponse getUser(@PathVariable Long id) {
-        return userService.findById(id);
-    }
-
-    @PostMapping
-    public ResponseEntity<Void> createUser(@RequestBody UserRequest request) {
-        userService.save(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-}
-```
-
-**파라미터 제어 어노테이션**
-
-| 어노테이션 | 설명 | 예시 |
+| 어노테이션 | 설명 | 예시 코드 |
 | :--- | :--- | :--- |
-| @PathVariable | URL 경로에 표함된 변수 추출 | /users/{id} |
-| @RequestParam | 쿼리 파라미터 추출 | /user?name=test |
-| @RequestBody | HTTP 본문(JSON 등)을 객체로 변환 | POST 데이터 |
-| @ResponseBody | 반환값을 HTTP 본문에 직접 기록 | JSON 응답 |
+| **@SpringBootApplication** | 앱 시작점 (3가지 설정 통합) | `@SpringBootApplication public class App {...}` |
+| **@Configuration** | 빈 설정 클래스 명시 | `@Configuration public class AppConfig {...}` |
+| **@Bean** | 수동 빈 등록 (메서드 반환 객체) | `@Bean public MyService myService() { ... }` |
+| **@ComponentScan** | 빈 스캔 패키지 경로 지정 | `@ComponentScan(basePackages = "com.example")` |
+| **@Import** | 다른 설정 클래스 로드 | `@Import({SecurityConfig.class, DbConfig.class})` |
 
-<br>
+---
 
-## 4. 설명 및 프로퍼티 (Properties)
+## 2. 의존성 주입 및 빈 관리 (DI/IoC)
+객체 간의 관계를 설정하고 생명주기를 관리합니다.
 
-- **@Value**
-    - **설명**: application.properties나 application.yml에 설정된 값을 필드에 주입합니다.
+| 어노테이션 | 설명 | 예시 코드 |
+| :--- | :--- | :--- |
+| **@Component** | 일반적인 스프링 관리 빈 등록 | `@Component public class Utility {...}` |
+| **@Autowired** | 타입에 맞는 빈 자동 주입 | `@Autowired private UserService userService;` |
+| **@Qualifier** | 동일 타입 빈 중 이름으로 식별 | `@Qualifier("mainService")` |
+| **@Primary** | 동일 타입 빈 중 우선순위 부여 | `@Primary @Service public class DefaultService...` |
+| **@Value** | 설정 파일(Properties/YML) 값 주입 | `@Value("${server.port}") private int port;` |
+| **@PostConstruct** | 빈 초기화 직후 실행 메서드 | `@PostConstruct public void init() {...}` |
+| **@PreDestroy** | 빈 소멸 직전 실행 메서드 | `@PreDestroy public void cleanup() {...}` |
 
-- **@ConfigurationProperties**
-    - **설명**: 계층적인 프로퍼티 설정을 자바 객체에 매핑합니다. (Type-safe)
+---
 
-```java
-@ConfigurationProperties(prefix = "mail")
-public class MailProperties {
-    private String host;
-    private int port;
-}
-```
+## 3. Web MVC / REST API (Web)
+HTTP 요청을 처리하고 응답을 반환하는 접점입니다.
 
-<br>
+| 어노테이션 | 설명 | 예시 코드 |
+| :--- | :--- | :--- |
+| **@RestController** | @Controller + @ResponseBody | `@RestController public class ApiController {...}` |
+| **@RequestMapping** | URL 패턴 매핑 (클래스/메서드) | `@RequestMapping("/api/v1")` |
+| **@GetMapping** | HTTP GET 요청 매핑 | `@GetMapping("/{id}")` |
+| **@PostMapping** | HTTP POST 요청 매핑 | `@PostMapping("/save")` |
+| **@PutMapping** | HTTP PUT (수정) 요청 매핑 | `@PutMapping("/update")` |
+| **@DeleteMapping** | HTTP DELETE (삭제) 요청 매핑 | `@DeleteMapping("/remove")` |
+| **@PathVariable** | URL 경로 내 변수 추출 | `public User get(@PathVariable Long id)` |
+| **@RequestParam** | 쿼리 파라미터(?key=val) 추출 | `public String search(@RequestParam String name)` |
+| **@RequestBody** | HTTP 요청 바디(JSON)를 객체화 | `public void add(@RequestBody UserDto user)` |
+| **@ResponseBody** | 반환 객체를 응답 바디로 변환 | `@ResponseBody public User getUser()` |
+| **@ResponseStatus** | 응답 시 특정 HTTP 상태 코드 지정 | `@ResponseStatus(HttpStatus.CREATED)` |
+| **@RequestHeader** | HTTP 요청 헤더 값 추출 | `public void log(@RequestHeader("UA") String ua)` |
 
-## 5. 트랜잭션 및 예외처리
+---
 
-- **@Transaction**
-    - **설명**: 메서드나 클래스를 트랜잭션 범위로 지정합니다. 오류 발생 시 자동 롤백을 수행합니다.
+## 4. 레이어드 아키텍처 (Layered Architecture)
+역할에 따라 클래스의 성격을 규정합니다.
 
-- **@@RestControllerAdvice & @ExceptionHandler**
-    - **설명**: 애플리케이션 전역에서 발생하는 예외를 한 곳에서 처리합니다.
+| 어노테이션 | 설명 | 예시 코드 |
+| :--- | :--- | :--- |
+| **@Service** | 비즈니스 로직 처리 클래스 명시 | `@Service public class OrderService {...}` |
+| **@Repository** | DB 접근 계층 (DAO) 명시 | `@Repository public interface UserRepository...` |
+| **@Controller** | View(HTML) 반환 컨트롤러 명시 | `@Controller public class WebController {...}` |
 
-```java
-@RestControllerAdvice
-public class GlobalExceptionHandler {
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleNotFound(UserNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-    }
-}
-```
+---
 
-<br>
+## 5. 데이터베이스 및 트랜잭션 (JPA/DB)
+데이터 영속성 관리와 데이터 정합성을 담당합니다.
 
-## 6. 테스트 (Testing)
+| 어노테이션 | 설명 | 예시 코드 |
+| :--- | :--- | :--- |
+| **@Transactional** | 트랜잭션 범위 및 롤백 관리 | `@Transactional public void transfer() {...}` |
+| **@Entity** | DB 테이블과 매핑될 JPA 클래스 | `@Entity public class User {...}` |
+| **@Id** | 엔티티의 기본키(PK) 지정 | `@Id @GeneratedValue private Long id;` |
+| **@Column** | 필드와 DB 컬럼 상세 매핑 | `@Column(name = "user_name", nullable = false)` |
+| **@Enumerated** | Enum 저장 방식 지정 | `@Enumerated(EnumType.STRING)` |
+| **@Transient** | DB 매핑에서 제외할 필드 | `@Transient private String tempCode;` |
 
-- **@SpringBootTest**: 통합 테스트를 위해 애플리케이션 컨텍스트를 전체 로드합니다.
-- **@WebMvcTest**: 컨트롤러 레이어만 테스트할 때 사용합니다.
-- **@MockBean**: 테스트 시 가짜 객체(Mock)를 빈으로 등록합니다.
+---
+
+## 6. 검증 및 예외 처리 (Validation/Advice)
+데이터 무결성 검사 및 전역 에러 처리를 수행합니다.
+
+| 어노테이션 | 설명 | 예시 코드 |
+| :--- | :--- | :--- |
+| **@Valid / @Validated** | 객체 제약 조건 검증 실행 | `public void save(@Valid @RequestBody Dto dto)` |
+| **@NotNull** | null 허용 안 함 | `@NotNull private String email;` |
+| **@Size** | 문자열/컬렉션 크기 제한 | `@Size(min = 2, max = 10)` |
+| **@ExceptionHandler** | 특정 예외 처리 메서드 지정 | `@ExceptionHandler(Exception.class)` |
+| **@ControllerAdvice** | 전역 예외 처리기 클래스 선언 | `@ControllerAdvice public class GlobalHandler...` |
+| **@ResponseStatus** | 예외 발생 시 특정 상태 코드 반환 | `@ResponseStatus(HttpStatus.NOT_FOUND)` |
+
+---
+
+## 7. 테스트 (Testing)
+코드의 품질을 검증하기 위한 도구입니다.
+
+| 어노테이션 | 설명 | 예시 코드 |
+| :--- | :--- | :--- |
+| **@SpringBootTest** | 전체 통합 테스트 (컨텍스트 로드) | `@SpringBootTest class MyTest {...}` |
+| **@WebMvcTest** | 웹 레이어(Controller) 슬라이스 테스트 | `@WebMvcTest(UserApiController.class)` |
+| **@DataJpaTest** | JPA 관련 빈만 테스트용 로드 | `@DataJpaTest class RepoTest {...}` |
+| **@MockBean** | 가짜 객체(Mock)를 만들어 주입 | `@MockBean private RemoteService service;` |
+| **@Test** | JUnit 5 테스트 메서드 선언 | `@Test void testMethod() {...}` |
+
+---
+
+## 8. 기타 유용한 기능 (Utility)
+생산성 향상을 위한 비동기, 스케줄링 등 부가 기능입니다.
+
+| 어노테이션 | 설명 | 예시 코드 |
+| :--- | :--- | :--- |
+| **@ConfigurationProperties** | 외부 설정을 자바 객체로 바인딩 | `@ConfigurationProperties("app.auth")` |
+| **@EnableScheduling** | 스케줄링 기능 활성화 | `@EnableScheduling @SpringBootApplication` |
+| **@Scheduled** | 특정 주기마다 메서드 실행 | `@Scheduled(fixedRate = 5000)` |
+| **@Async** | 비동기 메서드 실행 (별도 스레드) | `@Async public void sendEmail() {...}` |
+| **@Lazy** | 사용 시점까지 빈 생성 지연 | `@Lazy @Autowired private MyBean bean;` |
+| **@Profile** | 특정 환경(dev/prod)에서만 활성화 | `@Profile("prod") @Component...` |
