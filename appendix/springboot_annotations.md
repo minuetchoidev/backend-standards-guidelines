@@ -1,8 +1,14 @@
-# Spring Boot 3.5.x 핵심 어노테이션 50선 정리
+# Spring Boot 어노테이션 총량 및 분포
 
-Spring Boot 개발 시 가장 빈번하게 사용되는 핵심 어노테이션 50개를 8개의 카테고리로 분류하여 정리한 문서입니다.
+Spring 생태계가 워낙 거대하다 보니 정확한 "개수"를 한정 짓기 어렵지만, 일반적으로 다음과 같은 분포를 보입니다.
+
+- **전체 어노테이션**: 약 500개 이상 (Spring Core, Web, Data, Security, Cloud 등 포함)
+- **실무 빈출 어노테이션**: 약 80개
+- **주요 50선**: 실제 코드의 90% 이상을 점유하는 핵심
 
 ---
+
+<br>
 
 ## 1. 프로젝트 설정 및 메타 설정 (Config)
 애플리케이션의 시작점과 외부 설정을 구성합니다.
@@ -15,7 +21,7 @@ Spring Boot 개발 시 가장 빈번하게 사용되는 핵심 어노테이션 5
 | **@ComponentScan** | 빈 스캔 패키지 경로 지정 | `@ComponentScan(basePackages = "com.example")` |
 | **@Import** | 다른 설정 클래스 로드 | `@Import({SecurityConfig.class, DbConfig.class})` |
 
----
+<br>
 
 ## 2. 의존성 주입 및 빈 관리 (DI/IoC)
 객체 간의 관계를 설정하고 생명주기를 관리합니다.
@@ -30,7 +36,7 @@ Spring Boot 개발 시 가장 빈번하게 사용되는 핵심 어노테이션 5
 | **@PostConstruct** | 빈 초기화 직후 실행 메서드 | `@PostConstruct public void init() {...}` |
 | **@PreDestroy** | 빈 소멸 직전 실행 메서드 | `@PreDestroy public void cleanup() {...}` |
 
----
+<br>
 
 ## 3. Web MVC / REST API (Web)
 HTTP 요청을 처리하고 응답을 반환하는 접점입니다.
@@ -50,7 +56,7 @@ HTTP 요청을 처리하고 응답을 반환하는 접점입니다.
 | **@ResponseStatus** | 응답 시 특정 HTTP 상태 코드 지정 | `@ResponseStatus(HttpStatus.CREATED)` |
 | **@RequestHeader** | HTTP 요청 헤더 값 추출 | `public void log(@RequestHeader("UA") String ua)` |
 
----
+<br>
 
 ## 4. 레이어드 아키텍처 (Layered Architecture)
 역할에 따라 클래스의 성격을 규정합니다.
@@ -61,7 +67,7 @@ HTTP 요청을 처리하고 응답을 반환하는 접점입니다.
 | **@Repository** | DB 접근 계층 (DAO) 명시 | `@Repository public interface UserRepository...` |
 | **@Controller** | View(HTML) 반환 컨트롤러 명시 | `@Controller public class WebController {...}` |
 
----
+<br>
 
 ## 5. 데이터베이스 및 트랜잭션 (JPA/DB)
 데이터 영속성 관리와 데이터 정합성을 담당합니다.
@@ -75,7 +81,7 @@ HTTP 요청을 처리하고 응답을 반환하는 접점입니다.
 | **@Enumerated** | Enum 저장 방식 지정 | `@Enumerated(EnumType.STRING)` |
 | **@Transient** | DB 매핑에서 제외할 필드 | `@Transient private String tempCode;` |
 
----
+<br>
 
 ## 6. 검증 및 예외 처리 (Validation/Advice)
 데이터 무결성 검사 및 전역 에러 처리를 수행합니다.
@@ -89,7 +95,7 @@ HTTP 요청을 처리하고 응답을 반환하는 접점입니다.
 | **@ControllerAdvice** | 전역 예외 처리기 클래스 선언 | `@ControllerAdvice public class GlobalHandler...` |
 | **@ResponseStatus** | 예외 발생 시 특정 상태 코드 반환 | `@ResponseStatus(HttpStatus.NOT_FOUND)` |
 
----
+<br>
 
 ## 7. 테스트 (Testing)
 코드의 품질을 검증하기 위한 도구입니다.
@@ -102,7 +108,7 @@ HTTP 요청을 처리하고 응답을 반환하는 접점입니다.
 | **@MockBean** | 가짜 객체(Mock)를 만들어 주입 | `@MockBean private RemoteService service;` |
 | **@Test** | JUnit 5 테스트 메서드 선언 | `@Test void testMethod() {...}` |
 
----
+<br>
 
 ## 8. 기타 유용한 기능 (Utility)
 생산성 향상을 위한 비동기, 스케줄링 등 부가 기능입니다.
@@ -115,3 +121,50 @@ HTTP 요청을 처리하고 응답을 반환하는 접점입니다.
 | **@Async** | 비동기 메서드 실행 (별도 스레드) | `@Async public void sendEmail() {...}` |
 | **@Lazy** | 사용 시점까지 빈 생성 지연 | `@Lazy @Autowired private MyBean bean;` |
 | **@Profile** | 특정 환경(dev/prod)에서만 활성화 | `@Profile("prod") @Component...` |
+
+<br>
+
+## 9. 고급 설정 및 조건부 로드 (Conditional)
+생산성 향상을 위한 비동기, 스케줄링 등 부가 기능입니다.
+
+| 어노테이션 | 설명 | 예시 코드 |
+| :--- | :--- | :--- |
+|@ConditionalOnProperty | 특정 설정값(YML/Props) 존재 시에만 빈 등록 | ``@ConditionalOnProperty(name = "feature.enabled", havingValue = "true")`` |
+| @ConditionalOnClass | 특정 클래스가 클래스패스에 있을 때만 작동 | ``@ConditionalOnClass(name = "com.mysql.cj.jdbc.Driver")`` |
+| @DependsOn | 빈 생성의 우선순위(의존성 순서)를 강제 지정 | ``@DependsOn("databaseInitializer")`` |
+| @ImportResource | 자바 설정 클래스에서 XML 설정 파일을 로드 | ``@ImportResource("classpath:legacy-context.xml")`` |
+
+<br>
+
+## 10. 성능 및 최적화 (Cache/Event)
+반복적인 연산을 줄이거나 서비스 간의 결합도를 낮추어 시스템 성능을 향상시킵니다.
+
+| 어노테이션 | 설명 | 예시 코드 |
+| :--- | :--- | :--- |
+| @Cacheable | 메서드 결과를 캐시하여 동일 입력 시 재사용 | ``@Cacheable(value = "users", key = "#id")`` |
+| @CacheEvict | 데이터 수정 시 저장된 캐시를 삭제(무효화) | ``@CacheEvict(value = "users", allEntries = true)`` |
+| @EventListener | 애플리케이션 내부 이벤트를 구독/처리 | ``@EventListener public void handle(UserSignupEvent event)`` |
+
+<br>
+
+## 11. 보안 및 메시징 (Security/Messaging)
+인증/인가 처리와 분산 시스템 간의 데이터 통신을 담당합니다.
+
+| 어노테이션 | 설명 | 예시 코드 |
+| :--- | :--- | :--- |
+| @PreAuthorize | 메서드 실행 전 권한(Role) 유무를 체크 | ``@PreAuthorize("hasRole('ADMIN')")`` |
+| @AuthenticationPrincipal | 현재 로그인한 유저 세션 정보를 파라미터로 주입 | ``public void profile(@AuthenticationPrincipal User user)`` |
+| @KafkaListener | 카프카(Kafka) 토픽 메시지를 수신하는 메서드 | ``@KafkaListener(topics = "order-topic")`` |
+
+<br>
+
+## 12. 데이터 정교화 및 기타 유틸리티
+JSON 변환 제어 및 JPA의 성능을 미세 조정할 때 사용합니다.
+
+| 어노테이션 | 설명 | 예시 코드 |
+| :--- | :--- | :--- |
+| @JsonIgnore | 객체를 JSON으로 변환할 때 해당 필드 제외 | ``@JsonIgnore private String password;`` |
+| @JsonProperty | JSON의 키(Key) 이름과 필드명을 다르게 매핑 | ``@JsonProperty("user_id") private String userId;`` |
+| @DynamicUpdate | 변경된 필드만 포함하여 SQL Update 실행 (JPA) | ``@DynamicUpdate @Entity public class User {...}`` |
+| @Embedded | 여러 필드를 하나의 값 타입 객체로 그룹화 | ``@Embedded private Address address;`` |
+| @Modifying | @Query를 통한 수정/삭제 쿼리임을 명시 | ``@Modifying @Query("update User u set u.name = :name")`` |
