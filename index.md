@@ -12,7 +12,7 @@
 
     - Framework: Spring Boot 3.5.10
 
-    - Database: PostgreSQL, Redis (Cache/Session)
+    - Database: PostgreSQL 17.7-2, Redis (Cache/Session)
 
     - Connection Pool: HikariCP
 
@@ -24,7 +24,9 @@
 
     - 패키지 구조 표준: 기능(Domain) 기반 패키징 전략 (예: kr.co.sc301.domain)
 
-    - 데이터 객체(Data Object) 정책
+    - [API 설계 및 네이밍 규칙](./docs/api-naming-convention.md)
+
+    - 데이터 객체(Data Object) 정책 
 
     - Entity: DB 테이블 매핑
 
@@ -56,7 +58,7 @@
 
 5. ``보안 표준 (Security)``
 
-    - 인증 및 인가: Spring Security + JWT (Access/Refresh Token 전략 및 Redis 저장)
+    - 인증 및 인가: Spring Security + KeyCloak (Access/Refresh Token 전략 및 Redis 저장)
 
     - 보안 전용 객체: UserDetails 커스텀 및 SecurityContextHolder 접근 유틸리티
 
